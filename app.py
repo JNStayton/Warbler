@@ -249,6 +249,26 @@ def delete_user():
 
     return redirect("/signup")
 
+@app.route('/users/add_like/<int:msg_id>', methods=["POST"])
+def like_message(msg_id):
+    """Like a user's message"""
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    
+    liked_msg = Message.query.get_or_404(msg_id)
+
+    likes = g.user.likes
+    if liked_msg in likes:
+        g.user.likes = [l for l in likes if l != liked_msg]
+    else:
+        g.user.likes.append(liked_msg)
+
+    db.session.commit()
+    return redirect("/")
+
+
+
 
 ##############################################################################
 # Messages routes:
@@ -311,9 +331,14 @@ def homepage():
     - logged in: 100 most recent messages of followed_users
     """
 
+
     if g.user:
+        following = [f.id for f in g.user.following]
+        following.append(g.user.id)
+
         messages = (Message
                     .query
+                    .filter(Message.user_id.in_(following))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
