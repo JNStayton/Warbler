@@ -249,6 +249,7 @@ def delete_user():
 
     return redirect("/signup")
 
+
 @app.route('/users/add_like/<int:msg_id>', methods=["POST"])
 def like_message(msg_id):
     """Like a user's message"""
@@ -267,8 +268,16 @@ def like_message(msg_id):
     db.session.commit()
     return redirect("/")
 
+@app.route('/users/<int:user_id>/likes')
+def show_likes(user_id):
+    """Show details page for liked warbles"""
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    
+    user = User.query.get_or_404(user_id)
 
-
+    return render_template('users/likes.html', user=user)
 
 ##############################################################################
 # Messages routes:
