@@ -309,7 +309,7 @@ def messages_add():
 def messages_show(message_id):
     """Show a message."""
 
-    msg = Message.query.get(message_id)
+    msg = Message.query.get_or_404(message_id)
     return render_template('messages/show.html', message=msg)
 
 
@@ -324,7 +324,7 @@ def messages_destroy(message_id):
     msg = Message.query.get(message_id)
     db.session.delete(msg)
     db.session.commit()
-
+    flash('Successfully deleted your warble.', 'success')
     return redirect(f"/users/{g.user.id}")
 
 
