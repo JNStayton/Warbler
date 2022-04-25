@@ -204,6 +204,7 @@ def stop_following(follow_id):
     followed_user = User.query.get(follow_id)
     g.user.following.remove(followed_user)
     db.session.commit()
+    flash(f'Stopped following {followed_user.username}.')
 
     return redirect(f"/users/{g.user.id}/following")
 
@@ -267,6 +268,7 @@ def like_message(msg_id):
 
     db.session.commit()
     return redirect("/")
+
 
 @app.route('/users/<int:user_id>/likes')
 def show_likes(user_id):

@@ -52,6 +52,11 @@ class MessageViewTestCase(TestCase):
 
         db.session.commit()
 
+    def tearDown(self):
+        resp = super().tearDown()
+        db.session.rollback()
+        return resp
+
     def test_authenticated_add_message(self):
         """Can an authenticated user add a message?"""
 
